@@ -31,6 +31,8 @@ class TableCell extends Block
      */
     function reflow(BlockFrameDecorator $block = null)
     {
+        $this->_frame->_split_frame = null;
+
         // Counters and generated content
         $this->_set_content();
 
@@ -95,7 +97,7 @@ class TableCell extends Block
             $child->reflow($this->_frame);
             $this->process_float($child, $content_x, $cb_w);
 
-            if ($page->is_full()) {
+            if ($this->_frame->is_full()) {
                 break;
             }
         }
@@ -105,12 +107,12 @@ class TableCell extends Block
 
         /** @var FrameDecorator\TableCell */
         $frame = $this->_frame;
-
         $frame->set_content_height($this->_calculate_content_height());
 
         $height = max($style_height, (float)$frame->get_content_height());
 
         // Let the cellmap know our height
+        //TODO: row count should top out at the number of rows that exist
         $cell_height = $height / count($cells["rows"]);
 
         if ($style_height <= $height) {
